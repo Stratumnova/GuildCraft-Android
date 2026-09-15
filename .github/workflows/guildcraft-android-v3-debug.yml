@@ -1,0 +1,44 @@
+name: GuildCraft Android v3
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-debug-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Extract v3 project
+        run: unzip -q GuildCraft_Android_Capacitor_Project_v3_0_under25mb.zip -d guildcraft-v3
+      - name: Install dependencies
+        working-directory: guildcraft-v3/GuildCraft-Android-v3
+        run: npm ci
+      - name: Verify v3 contract
+        working-directory: guildcraft-v3/GuildCraft-Android-v3
+        run: npm test
+      - name: Verify Portal v3 regressions
+        working-directory: guildcraft-v3/GuildCraft-Android-v3/www
+        run: |
+          node tests/portal_v3_interaction.test.js
+          node tests/portal_v3_remaining_priorities.test.js
+          node tests/portal_checkpoint1_regression.test.js
+      - name: Sync Android
+        working-directory: guildcraft-v3/GuildCraft-Android-v3
+        run: npm run sync:android
+      - name: Build debug APK
+        working-directory: guildcraft-v3/GuildCraft-Android-v3/android
+        run: ./gradlew assembleDebug
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GuildCraft-v3-debug-apk
+          path: guildcraft-v3/GuildCraft-Android-v3/android/app/build/outputs/apk/debug/app-debug.apk
