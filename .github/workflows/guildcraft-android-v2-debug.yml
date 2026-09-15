@@ -1,0 +1,38 @@
+name: GuildCraft Android v2
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-debug-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Extract v2 project
+        run: unzip -q GuildCraft_Android_Capacitor_Project_v2_0_under25mb.zip -d guildcraft-v2
+      - name: Install dependencies
+        working-directory: guildcraft-v2/GuildCraft-Android-v2
+        run: npm ci
+      - name: Verify v2 contract
+        working-directory: guildcraft-v2/GuildCraft-Android-v2
+        run: npm test
+      - name: Sync Android
+        working-directory: guildcraft-v2/GuildCraft-Android-v2
+        run: npm run sync:android
+      - name: Build debug APK
+        working-directory: guildcraft-v2/GuildCraft-Android-v2/android
+        run: ./gradlew assembleDebug
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GuildCraft-v2-debug-apk
+          path: guildcraft-v2/GuildCraft-Android-v2/android/app/build/outputs/apk/debug/app-debug.apk
