@@ -77,6 +77,17 @@ function resolveAppPlugin(platform) {
   return platform?.Plugins?.App ?? platform?.App ?? null;
 }
 
+function resolveFileSaveAdapter(platform) {
+  const plugin = platform?.Plugins?.FileSave ?? platform?.FileSave;
+  if (!plugin?.saveFile) return null;
+  return {
+    saveFile({ name, mimeType, bytes }) {
+      const text = typeof bytes === 'string' ? bytes : String(bytes);
+      return plugin.saveFile({ name, mimeType, text });
+    }
+  };
+}
+
 export async function bootstrap({
   document,
   platform,
@@ -108,6 +119,7 @@ export async function bootstrap({
   let destroyed = false;
   let saveInFlight = Promise.resolve();
   const app = resolveAppPlugin(platform);
+  const nativeFileAdapter = resolveFileSaveAdapter(platform);
   const nativeListeners = [];
 
   for (const actor of controller.marketView().actors) {
@@ -147,6 +159,7 @@ export async function bootstrap({
       name: `market-lab-report.${kind}`,
       mimeType: json ? 'application/json' : 'text/plain',
       bytes: json ? controller.buildJsonEvidence() : controller.buildTextEvidence(),
+      nativeAdapter: nativeFileAdapter,
       document
     });
     elements.notice.textContent = `Saved ${result.name ?? result.uri}`;

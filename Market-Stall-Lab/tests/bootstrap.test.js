@@ -128,3 +128,32 @@ test('operator controls change canonical runtime state and create checkpoint and
   assert.ok(document.created.some(node => node.download === 'market-lab-report.txt'));
   await runtime.destroy();
 });
+
+test('Android export opens native Save As and reports only its confirmed content URI', async () => {
+  const document = new FakeDocument();
+  const writes = [];
+  const runtime = await bootstrap({
+    document,
+    platform: {
+      Plugins: {
+        FileSave: {
+          async saveFile(file) {
+            writes.push(file);
+            return { uri: 'content://documents/market-lab-report.json' };
+          }
+        }
+      }
+    },
+    storage: { getItem() { return null; }, setItem() {} },
+    timers: { setInterval() { return 1; }, clearInterval() {} }
+  });
+
+  await runtime.handleAction('export-json');
+
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].name, 'market-lab-report.json');
+  assert.equal(writes[0].mimeType, 'application/json');
+  assert.match(writes[0].text, /"checkpoint"/);
+  assert.equal(runtime.elements.notice.textContent, 'Saved content://documents/market-lab-report.json');
+  await runtime.destroy();
+});

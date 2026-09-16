@@ -8,6 +8,7 @@ const REQUIRED = [
   'assets/public/build-info.json',
   'assets/public/simulation/livingMarket.js',
   'assets/public/adapters/fileExporter.js',
+  'assets/public/app/bootstrap.js',
   'assets/public/app/reportBuilder.js'
 ];
 
@@ -29,6 +30,9 @@ export function auditApk({ apkPath, fingerprint }) {
   }
   const content = execFileSync('unzip', ['-p', apkPath], { maxBuffer: 256 * 1024 * 1024 }).toString('latin1');
   if (!content.includes(fingerprint)) throw new Error(`missing build fingerprint: ${fingerprint}`);
+  if (!content.includes('FileSave') || !content.includes('ACTION_CREATE_DOCUMENT')) {
+    throw new Error('missing native Save As bridge');
+  }
   for (const forbidden of FORBIDDEN) {
     if (forbidden.pattern.test(`${entries.join('\n')}\n${content}`)) {
       throw new Error(`forbidden content: ${forbidden.label}`);
