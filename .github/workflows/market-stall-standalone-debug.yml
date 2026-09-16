@@ -17,8 +17,12 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - name: Extract standalone project
-        run: unzip -q Market_Stall_Standalone_Android_v1_0.zip -d market-stall-build
+      - name: Extract newest standalone project
+        run: |
+          archive=$(find . -maxdepth 1 -type f -name 'Market_Stall_Standalone_Android_v*.zip' -printf '%f\n' | sort -V | tail -n 1)
+          test -n "$archive" || { echo "No Market Stall standalone ZIP found"; exit 1; }
+          echo "Building $archive"
+          unzip -q "$archive" -d market-stall-build
       - name: Install dependencies
         working-directory: market-stall-build/Market-Stall-Android
         run: npm ci
