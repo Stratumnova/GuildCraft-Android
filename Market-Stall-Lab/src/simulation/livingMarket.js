@@ -67,7 +67,6 @@ export function stepMarket(input, minutes = 1) {
     const emit = (type, data = {}) => {
       candidate.eventSequence += 1;
       const event = { ...data, eventId: `evt-${candidate.eventSequence}`, gameMinute: candidate.gameMinute, type };
-      candidate.events.push(event);
       stepEvents.push(event);
     };
     applyEconomyMinute(candidate, rng, emit);
