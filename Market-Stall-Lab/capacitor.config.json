@@ -1,0 +1,8 @@
+{
+  "appId": "org.neocities.guildcraft.marketlab",
+  "appName": "Market Stall Lab",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  }
+}
