@@ -31,7 +31,6 @@ jobs:
         run: |
           npm run sync:web
           printf 'Market Stall Standalone 1.1 | living-economy | %s\n' "$GITHUB_SHA" > www/market-stall-build.txt
-          sed -i 's|</body>|<div id="standaloneBuildMark" style="position:fixed;right:4px;bottom:2px;z-index:9999;font:9px monospace;color:#9da;background:#07100dcc;padding:2px 4px">STANDALONE 1.1 - LIVING ECONOMY</div></body>|' www/market-stall/index.html
       - name: Set standalone Android version
         working-directory: market-stall-build/Market-Stall-Android
         run: |
@@ -65,7 +64,9 @@ jobs:
           python3 -m unittest tests/test_market_expansion.py
       - name: Sync Android
         working-directory: market-stall-build/Market-Stall-Android
-        run: npm run sync:android
+        run: |
+          npm run sync:android
+          sed -i 's|</body>|<div id="standaloneBuildMark" style="position:fixed;right:4px;bottom:2px;z-index:9999;font:9px monospace;color:#9da;background:#07100dcc;padding:2px 4px">STANDALONE 1.1 - LIVING ECONOMY</div></body>|' android/app/src/main/assets/public/market-stall/index.html
       - name: Build debug APK
         working-directory: market-stall-build/Market-Stall-Android/android
         run: ./gradlew assembleDebug
