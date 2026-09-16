@@ -34,6 +34,8 @@ jobs:
         run: node scripts/build-web.js
       - name: Synchronize Capacitor Android
         run: npx cap sync android
+      - name: Make Gradle wrapper executable
+        run: chmod +x android/gradlew
       - name: Compile debug APK
         run: ./gradlew assembleDebug
         working-directory: Market-Stall-Lab/android
