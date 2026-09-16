@@ -1,4 +1,4 @@
-export function createTerminalView({ root }) {
+export function createTerminalView({ root, document = root.ownerDocument ?? globalThis.document }) {
   function render(view) {
     root.replaceChildren();
     const summary = document.createElement('pre');

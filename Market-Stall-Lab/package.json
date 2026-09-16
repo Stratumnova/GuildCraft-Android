@@ -2,7 +2,7 @@
   "name": "market-stall-lab",
   "private": true,
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "test": "node --test tests/*.test.js",
     "sync:android": "node scripts/build-web.js && npx cap sync android"

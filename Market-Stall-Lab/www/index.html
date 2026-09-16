@@ -10,7 +10,13 @@
   <main id="app" aria-live="polite">Starting Market Stall Lab…</main>
   <script type="module">
     import { bootstrap } from './app/bootstrap.js';
-    addEventListener('DOMContentLoaded', () => bootstrap({ document, platform: globalThis.Capacitor }));
+    addEventListener('DOMContentLoaded', () => {
+      bootstrap({ document, platform: globalThis.Capacitor }).catch(error => {
+        const root = document.getElementById('app');
+        root.className = 'fatal-error';
+        root.textContent = `MARKET STALL LAB FAILED TO START\n${error.stack ?? error.message}`;
+      });
+    });
   </script>
 </body>
 </html>
