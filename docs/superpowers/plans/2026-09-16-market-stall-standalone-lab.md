@@ -16,7 +16,7 @@
 - Android application ID is `org.neocities.guildcraft.marketlab`.
 - `LivingMarket` is the sole authority for actors, stalls, clock, RNG, travel, ledger, and events.
 - Simulation uses fixed one-game-minute steps; speed changes consumption rate only.
-- Checkpoints serialize current RNG state and authoritative travel state.
+- Checkpoints serialize complete `PCG32` state/stream values and authoritative travel state.
 - Portal, Trapline, room-host, playable-player, and clipboard APIs are forbidden.
 - JSON exports separate `checkpoint`, `journal`, `ledger`, `warnings`, `marks`, `configuration`, and `build`.
 - One build-generated fingerprint appears in UI, checkpoint, exports, and compiled-APK audit.
@@ -104,7 +104,7 @@ git commit -m "feat: establish isolated Market Stall Lab shell"
 
 ---
 
-### Task 2: Canonical State, Serializable RNG, and Travel
+### Task 2: Canonical State, Serializable PCG32, and Travel
 
 **Files:**
 - Create: `Market-Stall-Lab/src/simulation/rng.js`
@@ -115,17 +115,20 @@ git commit -m "feat: establish isolated Market Stall Lab shell"
 - Create: `Market-Stall-Lab/tests/travel.test.js`
 
 **Interfaces:**
-- Produces: `createRng(seedOrState)`, `createMarket(config)`, `stepMarket(state, minutes)`, `projectTravel(travel, gameMinute)`.
+- Produces: `createPcg32(seedOrState)`, `nextUint32()`, `nextFloat()`, `nextInt(bound)`, `createMarket(config)`, `stepMarket(state, minutes)`, `projectTravel(travel, gameMinute)`.
 - `createMarket` returns `{state, events}`; `stepMarket` returns `{ok, state, events, failure}` without mutating input.
 
 - [ ] **Step 1: Write failing RNG and travel tests**
 
 ```js
-test('serialized RNG resumes the same sequence', () => {
-  const first = createRng(25);
-  first.next(); first.next();
-  const resumed = createRng(first.serialize());
-  assert.deepEqual([resumed.next(), resumed.next()], [first.next(), first.next()]);
+test('serialized PCG32 resumes the same sequence', () => {
+  const first = createPcg32({seed:25n, stream:54n});
+  first.nextUint32(); first.nextUint32();
+  const resumed = createPcg32(first.serialize());
+  assert.deepEqual(
+    [resumed.nextUint32(), resumed.nextUint32()],
+    [first.nextUint32(), first.nextUint32()]
+  );
 });
 
 test('travel projection interpolates authoritative progress', () => {
@@ -139,9 +142,11 @@ test('travel projection interpolates authoritative progress', () => {
 Run: `cd Market-Stall-Lab && node --test tests/determinism.test.js tests/travel.test.js`  
 Expected: FAIL with module-not-found errors.
 
-- [ ] **Step 3: Implement serializable RNG and canonical schema**
+- [ ] **Step 3: Implement serializable PCG32 and canonical schema**
 
-Use a 32-bit generator whose `serialize()` returns `{algorithm:'lcg32', state:uint32}`. Canonical state contains `schemaVersion`, `sessionId`, `seed`, `rngState`, `gameMinute`, `actors`, `stalls`, `ledger`, `eventSequence`, `warnings`, and `paused`.
+Use PCG-XSH-RR with 64-bit `BigInt` state and odd stream increment. `serialize()` returns `{algorithm:'pcg32', stateHex, incrementHex}` so JSON never loses integer precision. `nextFloat()` divides unsigned 32-bit output by `2 ** 32`. `nextInt(bound)` uses rejection sampling with threshold `2 ** 32 % bound`; it must not use raw low bits or direct modulo selection. Canonical state contains `schemaVersion`, `sessionId`, `seed`, `rngState`, `gameMinute`, `actors`, `stalls`, `ledger`, `eventSequence`, `warnings`, and `paused`.
+
+Add PCG32 reference-vector assertions, 100 serialize/resume split points, range assertions for bounds `2`, `3`, `7`, `10`, and `257`, and a distribution smoke test over 100,000 draws whose tolerance is loose enough to avoid flaky failures but rejects severe bucket collapse.
 
 Actor travel state is either `null` or:
 
@@ -159,7 +164,7 @@ Actor travel state is either `null` or:
 
 - [ ] **Step 4: Implement immutable `stepMarket`**
 
-Clone canonical input, restore RNG from `rngState`, process exactly `minutes` one-minute transitions, persist updated RNG state, and return a new state. Never use `Date.now()`, `Math.random()`, or render-frame time in simulation logic.
+Clone canonical input, restore PCG32 from `rngState`, process exactly `minutes` one-minute transitions, persist updated PCG32 state, and return a new state. Never use `Date.now()`, `Math.random()`, raw RNG low bits, or render-frame time in simulation logic.
 
 - [ ] **Step 5: Verify determinism and travel tests pass**
 
