@@ -1,9 +1,15 @@
-name: GuildCraft Android v3
+name: Build GuildCraft Front-Facing Android v3.0
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
-  workflow_dispatch:
+    paths:
+      - uploads/front-facing/GuildCraft_FrontFacing_Android_v3.0_UPLOAD.zip
+      - .github/workflows/build-guildcraft-front-facing-v3.0.yml
+
+permissions:
+  contents: read
 
 jobs:
   build-debug-apk:
@@ -17,8 +23,8 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - name: Extract v3 project
-        run: unzip -q GuildCraft_Android_Capacitor_Project_v3_0_under25mb.zip -d guildcraft-v3
+      - name: Extract GuildCraft front-facing v3.0 upload
+        run: unzip -q uploads/front-facing/GuildCraft_FrontFacing_Android_v3.0_UPLOAD.zip -d guildcraft-v3
       - name: Install dependencies
         working-directory: guildcraft-v3/GuildCraft-Android-v3
         run: npm ci
@@ -37,8 +43,8 @@ jobs:
       - name: Build debug APK
         working-directory: guildcraft-v3/GuildCraft-Android-v3/android
         run: ./gradlew assembleDebug
-      - name: Upload installable APK
+      - name: Upload GuildCraft front-facing v3.0 APK
         uses: actions/upload-artifact@v4
         with:
-          name: GuildCraft-v3-debug-apk
+          name: GuildCraft-FrontFacing-v3.0-debug-apk
           path: guildcraft-v3/GuildCraft-Android-v3/android/app/build/outputs/apk/debug/app-debug.apk
