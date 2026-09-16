@@ -1,0 +1,24 @@
+{
+  "status": "APPROVED",
+  "configuration": {
+    "seed": 25,
+    "stream": 77,
+    "sessionId": "seed-25-acceptance",
+    "gameMinutes": 10080,
+    "checkpointMinute": 4320
+  },
+  "buildFingerprint": "5eed25000001",
+  "builtAt": "2026-09-16T00:00:00.000Z",
+  "exportedAt": "2026-09-16T00:00:00.000Z",
+  "stateHash": "d53eaf0200be2ff05b546c599add10e310d42658255590eea2a662c1055299c8",
+  "eventHash": "1d17631d898749ff266a1708f9447ea5549847450f2c1efadb69112f83ccd855",
+  "eventCount": 23202,
+  "ledgerEntries": 12,
+  "ledgerTotal": 60,
+  "warningCount": 0,
+  "finalStalls": {
+    "food": { "storage": 6, "display": 3, "till": 195, "open": false },
+    "tools": { "storage": 10, "display": 3, "till": 259, "open": false },
+    "salvage": { "storage": 8, "display": 3, "till": 91, "open": false }
+  }
+}
