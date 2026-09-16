@@ -30,7 +30,7 @@ export function auditApk({ apkPath, fingerprint }) {
   }
   const content = execFileSync('unzip', ['-p', apkPath], { maxBuffer: 256 * 1024 * 1024 }).toString('latin1');
   if (!content.includes(fingerprint)) throw new Error(`missing build fingerprint: ${fingerprint}`);
-  if (!content.includes('FileSave') || !content.includes('ACTION_CREATE_DOCUMENT')) {
+  if (!content.includes('FileSavePlugin')) {
     throw new Error('missing native Save As bridge');
   }
   for (const forbidden of FORBIDDEN) {

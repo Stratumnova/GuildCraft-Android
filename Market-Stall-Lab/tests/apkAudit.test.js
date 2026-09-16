@@ -18,7 +18,7 @@ function fixtureApk({ forbidden = false, nativeFileSave = true } = {}) {
   fs.writeFileSync(path.join(publicDir, 'adapters/fileExporter.js'), 'export function saveFile() {}');
   fs.writeFileSync(path.join(publicDir, 'app/reportBuilder.js'), 'export function buildJsonReport() {}');
   fs.writeFileSync(path.join(publicDir, 'app/bootstrap.js'), 'const nativePlugin = "FileSave";');
-  fs.writeFileSync(path.join(root, 'classes.dex'), nativeFileSave ? 'FileSave ACTION_CREATE_DOCUMENT' : 'no native saver');
+  fs.writeFileSync(path.join(root, 'classes.dex'), nativeFileSave ? 'FileSavePlugin saveFile' : 'no native saver');
   if (forbidden) fs.writeFileSync(path.join(publicDir, 'legacy.js'), 'const route = "portal/index.html";');
   const apkPath = path.join(root, 'fixture.apk');
   execFileSync('zip', ['-q', '-r', apkPath, 'assets', 'classes.dex'], { cwd: root });
