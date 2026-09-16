@@ -78,7 +78,9 @@ Each stall owns its storage, display inventory, till, prices, operator, open sta
 
 ### Deterministic random state
 
-The simulation owns a serializable deterministic random-number generator. Checkpoints include its complete current state, not only the original seed. A resumed session must make the same later random decisions as an uninterrupted session at the same canonical checkpoint.
+The simulation owns a serializable `PCG32` random-number generator using 64-bit internal state and stream increment represented as hexadecimal strings at serialization boundaries. Checkpoints include the generator's complete current state, not only the original seed. A resumed session must make the same later random decisions as an uninterrupted session at the same canonical checkpoint.
+
+Probability checks consume normalized 32-bit output. Selection from a bounded integer range uses rejection sampling and must not use raw low-order bits or `output % range`, which would introduce modulo bias. Automated tests cover known PCG32 reference vectors, serialize/resume equivalence, bounded-range validity, and a non-brittle distribution smoke check capable of detecting severe selection bias.
 
 ### Transactional state changes
 
