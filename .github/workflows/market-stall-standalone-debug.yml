@@ -31,7 +31,7 @@ jobs:
         run: |
           npm run sync:web
           printf 'Market Stall Standalone 1.1 | living-economy | %s\n' "$GITHUB_SHA" > www/market-stall-build.txt
-          sed -i 's|</body>|<div id="standaloneBuildMark" style="position:fixed;right:4px;bottom:2px;z-index:9999;font:9px monospace;color:#9da;background:#07100dcc;padding:2px 4px">STANDALONE 1.1 · LIVING ECONOMY</div></body>|' www/market-stall/index.html
+          sed -i 's|</body>|<div id="standaloneBuildMark" style="position:fixed;right:4px;bottom:2px;z-index:9999;font:9px monospace;color:#9da;background:#07100dcc;padding:2px 4px">STANDALONE 1.1 - LIVING ECONOMY</div></body>|' www/market-stall/index.html
       - name: Set standalone Android version
         working-directory: market-stall-build/Market-Stall-Android
         run: |
@@ -74,12 +74,12 @@ jobs:
         run: |
           mkdir apk-audit
           unzip -q android/app/build/outputs/apk/debug/app-debug.apk -d apk-audit
-          test -f apk-audit/assets/public/market-stall/runtime/livingMarket.js
-          test -f apk-audit/assets/public/market-stall/runtime/marketSimulation.js
-          test -f apk-audit/assets/public/market-stall/observerUi.js
-          test -f apk-audit/assets/public/market-stall/runtime/reportExporter.js
-          test -f apk-audit/assets/public/market-stall-build.txt
-          grep -q 'STANDALONE 1.1 · LIVING ECONOMY' apk-audit/assets/public/market-stall/index.html
+          test -f apk-audit/assets/public/market-stall/runtime/livingMarket.js && echo 'PASS livingMarket.js'
+          test -f apk-audit/assets/public/market-stall/runtime/marketSimulation.js && echo 'PASS marketSimulation.js'
+          test -f apk-audit/assets/public/market-stall/observerUi.js && echo 'PASS observerUi.js'
+          test -f apk-audit/assets/public/market-stall/runtime/reportExporter.js && echo 'PASS reportExporter.js'
+          test -f apk-audit/assets/public/market-stall-build.txt && echo 'PASS market-stall-build.txt'
+          grep -Fq 'STANDALONE 1.1 - LIVING ECONOMY' apk-audit/assets/public/market-stall/index.html && echo 'PASS visible build marker'
       - name: Upload installable APK
         uses: actions/upload-artifact@v4
         with:
