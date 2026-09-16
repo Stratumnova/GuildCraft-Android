@@ -1,0 +1,62 @@
+name: Market Stall Standalone Android
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-debug-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Extract standalone project
+        run: unzip -q Market_Stall_Standalone_Android_v1_0.zip -d market-stall-build
+      - name: Install dependencies
+        working-directory: market-stall-build/Market-Stall-Android
+        run: npm ci
+      - name: Sync standalone web package
+        working-directory: market-stall-build/Market-Stall-Android
+        run: npm run sync:web
+      - name: Verify Android contract
+        working-directory: market-stall-build/Market-Stall-Android
+        run: npm test
+      - name: Verify Market Stall systems
+        working-directory: market-stall-build/Market-Stall-Android/web-source
+        run: |
+          node tests/actor_presentation.test.js
+          node tests/biome_registry.test.js
+          node tests/market_ai_economy.test.js
+          node tests/market_autonomous_simulation.test.js
+          node tests/market_flow_runtime.test.js
+          node tests/market_item_actor.test.js
+          node tests/market_living_economy_batch.test.js
+          node tests/market_observer.test.js
+          node tests/market_observer_ui.test.js
+          node tests/market_report_export.test.js
+          node tests/market_standalone_acceptance.test.js
+          node tests/market_standalone_foundation.test.js
+          node tests/mobile_feedback_v21.test.js
+          node tests/npc_dialogue_v20.test.js
+          node tests/play_balance_v19.test.js
+          node tests/presentation_assets.test.js
+          node tests/save_migration_v22.test.js
+          python3 -m unittest tests/test_market_expansion.py
+      - name: Sync Android
+        working-directory: market-stall-build/Market-Stall-Android
+        run: npm run sync:android
+      - name: Build debug APK
+        working-directory: market-stall-build/Market-Stall-Android/android
+        run: ./gradlew assembleDebug
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Market-Stall-standalone-debug-apk
+          path: market-stall-build/Market-Stall-Android/android/app/build/outputs/apk/debug/app-debug.apk
