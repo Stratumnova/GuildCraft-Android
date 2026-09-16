@@ -1,0 +1,49 @@
+name: Market Stall Lab Android
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [market-stall-lab]
+    paths:
+      - Market-Stall-Lab/**
+      - .github/workflows/market-stall-lab-android.yml
+
+jobs:
+  build-and-audit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Market-Stall-Lab
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Market-Stall-Lab/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run complete Lab test suite
+        run: npm test
+      - name: Generate fingerprinted web package
+        run: node scripts/build-web.js
+      - name: Synchronize Capacitor Android
+        run: npx cap sync android
+      - name: Compile debug APK
+        run: ./gradlew assembleDebug
+        working-directory: Market-Stall-Lab/android
+      - name: Audit compiled APK boundary and contents
+        run: |
+          FINGERPRINT="$(node -p "require('./www/build-info.json').fingerprint")"
+          node scripts/audit-apk.js android/app/build/outputs/apk/debug/app-debug.apk "$FINGERPRINT"
+      - name: Upload audited Lab APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Market-Stall-Lab-debug-apk
+          path: Market-Stall-Lab/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

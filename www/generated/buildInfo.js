@@ -1,0 +1,6 @@
+export const BUILD_INFO = Object.freeze({
+  "version": "0.1.0",
+  "commit": "local-development",
+  "fingerprint": "c84ba1c99dac",
+  "builtAt": "2026-09-16T15:53:05.806Z"
+});
