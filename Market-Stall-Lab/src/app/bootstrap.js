@@ -141,7 +141,7 @@ export async function bootstrap({
     const snapshot = controller.snapshot();
     elements.clock.textContent = `${formatClock(snapshot.gameMinute)} · ${snapshot.running ? 'RUNNING' : 'PAUSED'} · ${speed}×`;
     elements.fingerprint.textContent = `BUILD ${buildInfo.fingerprint}`;
-    marketRenderer.render(controller.marketView());
+    marketRenderer.render(controller.marketView(), controller.districtView());
     terminalView.render(controller.terminalView());
   }
 
