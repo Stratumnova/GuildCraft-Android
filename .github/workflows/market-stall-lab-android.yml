@@ -1,9 +1,9 @@
-name: Market Stall Lab Android
+name: Market Stall Lab vPNG1 Android
 
 on:
   workflow_dispatch:
   push:
-    branches: [market-stall-lab]
+    branches: [MarketStallLab_vpng1]
     paths:
       - Market-Stall-Lab/**
       - .github/workflows/market-stall-lab-android.yml
@@ -43,9 +43,9 @@ jobs:
         run: |
           FINGERPRINT="$(node -p "require('./www/build-info.json').fingerprint")"
           node scripts/audit-apk.js android/app/build/outputs/apk/debug/app-debug.apk "$FINGERPRINT"
-      - name: Upload audited Lab APK
+      - name: Upload audited vPNG1 APK
         uses: actions/upload-artifact@v4
         with:
-          name: Market-Stall-Lab-v0.2.1-debug-apk
+          name: Market-Stall-Lab-vpng1-debug-apk
           path: Market-Stall-Lab/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
