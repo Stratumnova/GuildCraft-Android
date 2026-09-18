@@ -1,6 +1,6 @@
 {
-  "appId": "org.neocities.guildcraft.marketlab",
-  "appName": "Market Stall Lab",
+  "appId": "org.neocities.guildcraft.marketlab.vpng1",
+  "appName": "Market Stall Lab vPNG1",
   "webDir": "www",
   "android": {
     "allowMixedContent": false
