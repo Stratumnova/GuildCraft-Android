@@ -16,9 +16,9 @@ test('lab source excludes front-facing dependencies and clipboard transfer', () 
   }
 });
 
-test('capacitor identity is dedicated to the lab', () => {
+test('capacitor identity is dedicated to the vPNG1 lab branch', () => {
   const config = JSON.parse(fs.readFileSync(new URL('../capacitor.config.json', import.meta.url), 'utf8'));
-  assert.equal(config.appId, 'org.neocities.guildcraft.marketlab');
-  assert.equal(config.appName, 'Market Stall Lab');
+  assert.equal(config.appId, 'org.neocities.guildcraft.marketlab.vpng1');
+  assert.equal(config.appName, 'Market Stall Lab vPNG1');
   assert.equal(config.webDir, 'www');
 });
