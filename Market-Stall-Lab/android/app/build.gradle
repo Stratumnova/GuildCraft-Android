@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "org.neocities.guildcraft.marketlab"
+    namespace = "org.neocities.guildcraft.marketlab.vpng1"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "org.neocities.guildcraft.marketlab"
+        applicationId "org.neocities.guildcraft.marketlab.vpng1"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 3
