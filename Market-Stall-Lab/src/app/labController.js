@@ -1,6 +1,7 @@
 import { createMarket, stepMarket } from '../simulation/livingMarket.js';
 import { projectMarket } from '../projections/marketProjection.js';
 import { projectTerminal } from '../projections/terminalProjection.js';
+import { projectCibolaDistrict } from '../district/cibolaDistrict.js';
 import { createCamera } from '../ui/camera.js';
 import { buildJsonReport, buildTextReport } from './reportBuilder.js';
 
@@ -74,6 +75,7 @@ export function createLabController({
       return camera.updateFollow(actor.position);
     },
     marketView() { return projectMarket(state); },
+    districtView() { return projectCibolaDistrict(state.gameMinute); },
     terminalView(filters = {}) { return projectTerminal(state, journal, filters); },
     createCheckpoint() {
       requireLive();
