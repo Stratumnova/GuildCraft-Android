@@ -14,20 +14,6 @@ jobs:
         working-directory: Market-Stall-Lab
     steps:
       - uses: actions/checkout@v4
-
-      - name: Package branch source snapshot
-        run: |
-          zip -q -r "../Market-Stall-Lab-source-${GITHUB_SHA}.zip" . \
-            -x "node_modules/*" "android/.gradle/*" "android/app/build/*" \
-               "android/capacitor-cordova-android-plugins/*"
-
-      - name: Upload branch source snapshot
-        uses: actions/upload-artifact@v4
-        with:
-          name: Market-Stall-Lab-source-${{ github.sha }}
-          path: Market-Stall-Lab-source-${{ github.sha }}.zip
-          if-no-files-found: error
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
