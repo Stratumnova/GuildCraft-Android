@@ -1,5 +1,4 @@
 name: Market Stall Lab vPNG1 Android
-
 on:
   workflow_dispatch:
   push:
@@ -7,7 +6,6 @@ on:
     paths:
       - Market-Stall-Lab/**
       - .github/workflows/market-stall-lab-android.yml
-
 jobs:
   build-and-audit:
     runs-on: ubuntu-latest
@@ -16,16 +14,29 @@ jobs:
         working-directory: Market-Stall-Lab
     steps:
       - uses: actions/checkout@v4
+
+      - name: Package branch source snapshot
+        run: |
+          zip -q -r "../Market-Stall-Lab-source-${GITHUB_SHA}.zip" . \
+            -x "node_modules/*" "android/.gradle/*" "android/app/build/*" \
+               "android/capacitor-cordova-android-plugins/*"
+
+      - name: Upload branch source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: Market-Stall-Lab-source-${{ github.sha }}
+          path: Market-Stall-Lab-source-${{ github.sha }}.zip
+          if-no-files-found: error
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: npm
           cache-dependency-path: Market-Stall-Lab/package-lock.json
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
-
+          java-version: 17
       - name: Install locked dependencies
         run: npm ci
       - name: Run complete Lab test suite
