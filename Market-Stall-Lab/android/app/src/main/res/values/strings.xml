@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Market Stall Lab</string>
-    <string name="title_activity_main">Market Stall Lab</string>
-    <string name="package_name">org.neocities.guildcraft.marketlab</string>
-    <string name="custom_url_scheme">org.neocities.guildcraft.marketlab</string>
+    <string name="app_name">Market Stall Lab vPNG1</string>
+    <string name="title_activity_main">Market Stall Lab vPNG1</string>
+    <string name="package_name">org.neocities.guildcraft.marketlab.vpng1</string>
+    <string name="custom_url_scheme">org.neocities.guildcraft.marketlab.vpng1</string>
 </resources>
