@@ -1,4 +1,4 @@
-package org.neocities.guildcraft.marketlab;
+package org.neocities.guildcraft.marketlab.vpng1;
 
 import android.os.Bundle;
 import com.getcapacitor.BridgeActivity;
